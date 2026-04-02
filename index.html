@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -191,7 +192,7 @@ function initRace(){
   
   // Three.js setup
   scene=new THREE.Scene();
-  scene.fog=new THREE.FogExp2(0x0a0a12,0.003);
+  scene.fog=new THREE.FogExp2(0x0a0a12,0.0015);
   scene.background=new THREE.Color(0x0a0a12);
   
   camera=new THREE.PerspectiveCamera(70,innerWidth/innerHeight,0.5,2000);
@@ -200,7 +201,7 @@ function initRace(){
   renderer.shadowMap.enabled=true;
   renderer.shadowMap.type=THREE.PCFSoftShadowMap;
   renderer.toneMapping=THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure=0.8;
+  renderer.toneMappingExposure=1.2;
   document.body.appendChild(renderer.domElement);
   
   window.addEventListener('resize',()=>{
@@ -211,8 +212,8 @@ function initRace(){
   clock=new THREE.Clock();
   
   // Lighting
-  const ambient=new THREE.AmbientLight(0x303050,0.6);scene.add(ambient);
-  const dirLight=new THREE.DirectionalLight(0xffeedd,0.8);
+  const ambient=new THREE.AmbientLight(0x606080,1.2);scene.add(ambient);
+  const dirLight=new THREE.DirectionalLight(0xffeedd,1.5);
   dirLight.position.set(100,200,100);dirLight.castShadow=true;
   dirLight.shadow.mapSize.set(2048,2048);
   dirLight.shadow.camera.near=10;dirLight.shadow.camera.far=600;
@@ -233,7 +234,7 @@ function initRace(){
   
   // Ground plane
   const groundGeo=new THREE.PlaneGeometry(2000,2000);
-  const groundMat=new THREE.MeshLambertMaterial({color:0x0a1a0a});
+  const groundMat=new THREE.MeshLambertMaterial({color:0x1a2a1a});
   groundMesh=new THREE.Mesh(groundGeo,groundMat);
   groundMesh.rotation.x=-Math.PI/2;groundMesh.position.y=-0.1;
   groundMesh.receiveShadow=true;scene.add(groundMesh);
@@ -336,7 +337,7 @@ function buildRoadMesh(){
   roadGeo.computeVertexNormals();
   
   // Road material - dark asphalt
-  const roadMat=new THREE.MeshLambertMaterial({color:0x333338});
+  const roadMat=new THREE.MeshLambertMaterial({color:0x444448});
   const road=new THREE.Mesh(roadGeo,roadMat);road.receiveShadow=true;
   scene.add(road);
   
@@ -445,9 +446,9 @@ function buildScenery(){
       const dist=side*10;
       const lamp=new THREE.Mesh(lampGeo,lampMat);
       lamp.position.set(p.x+B.x*dist,3,p.z+B.z*dist);scene.add(lamp);
-      const light=new THREE.PointLight(0xffeebb,0.5,20);
+      const light=new THREE.PointLight(0xffeebb,1.0,30);
       light.position.set(p.x+B.x*dist,6,p.z+B.z*dist);
-      if(i%18===0) scene.add(light); // every 3rd lamp has light (performance)
+      if(i%12===0) scene.add(light); // every 3rd lamp has light (performance)
     }
   }
 }
@@ -485,8 +486,8 @@ function update(dt){
   
   // Steering
   const steerAmt=12*hnd*dt*(0.3+speed/maxSpd*0.7);
-  if(keys['a']||keys['arrowleft'])lateralOff-=steerAmt;
-  if(keys['d']||keys['arrowright'])lateralOff+=steerAmt;
+  if(keys['a']||keys['arrowleft'])lateralOff+=steerAmt;
+  if(keys['d']||keys['arrowright'])lateralOff-=steerAmt;
   lateralOff=Math.max(-7,Math.min(7,lateralOff));
   // Off road penalty
   if(Math.abs(lateralOff)>6.5)speed*=0.96;
